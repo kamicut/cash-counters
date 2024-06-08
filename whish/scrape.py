@@ -60,6 +60,16 @@ for district in districts_data:
     print(f"Fetching shops for district ID: {district_id}, governorate ID: {governorate_id}")
     shops = fetch_shops(district_id, governorate_id)
     for shop in shops:
+        if shop['latitude'] is None or shop['longitude'] is None or (shop['latitude'] == 0.0 and shop['longitude'] == 0.0):
+            # log the shop with missing coordinates
+            print(f"Shop with missing coordinates: {shop['name']}")
+            continue
+
+        # stringify working hours
+        working_hours = shop['workingHours']
+        if working_hours:
+            working_hours = json.dumps(working_hours)
+
         feature = {
             "type": "Feature",
             "geometry": {
@@ -70,7 +80,7 @@ for district in districts_data:
                 "name": shop['name'],
                 "address": shop['address'],
                 "phone": shop['phone'],
-                "workingHours": shop['workingHours'],
+                "working_hours": working_hours,
                 "url": shop['url'],
                 "type": shop['type']
             }
